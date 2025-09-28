@@ -2,6 +2,16 @@ const mongoose = require('mongoose');
 const Question = require('../models/Question');
 const Quiz = require('../models/Quiz');
 
+async function getAllQuestions(req, res) {
+	try {
+		const questions = await Question.find();
+		return res.json({ success: true, data: questions });
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({ success: false, message: err.message || 'Server error' });
+	}
+}
+
 async function createQuestion(req, res, next) {
 	try {
 		const { text, options, keywords, correctAnswerIndex } = req.body;
@@ -66,6 +76,7 @@ async function deleteQuestion(req, res) {
 }
 
 module.exports = {
+	getAllQuestions,
 	createQuestion,
 	getQuestionById,
 	updateQuestion,

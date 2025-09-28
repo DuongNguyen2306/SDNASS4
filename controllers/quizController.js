@@ -12,16 +12,32 @@ async function getAllQuizzes(req, res, next) {
 }
 
 async function createQuiz(req, res) {
-    try {
-        const { title, description = '', questions = [] } = req.body;
-        const quiz = await Quiz.create({ title, description, questions });
-        const populated = await Quiz.findById(quiz._id).populate('questions');
-        return res.status(201).json({ success: true, data: populated });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ success: false, message: err.message });
+  try {
+    const { title, description = '', questions = [] } = req.body;
+    let questionIds = [];
+
+    if (Array.isArray(questions) && questions.length > 0) {
+      for (let q of questions) {
+        if (typeof q === 'string') {
+          // nếu là ID
+          questionIds.push(q);
+        } else if (q && typeof q === 'object') {
+          // nếu là object thì tạo mới
+          const created = await Question.create(q);
+          questionIds.push(created._id);
+        }
+      }
     }
+
+    const quiz = await Quiz.create({ title, description, questions: questionIds });
+    const populated = await Quiz.findById(quiz._id).populate('questions');
+    res.status(201).json({ success: true, data: populated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
 }
+
 
 async function getQuizById(req, res, next) {
 	try {
