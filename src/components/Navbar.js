@@ -24,8 +24,7 @@ const NavbarComponent = () => {
         <Navbar.Brand>
           <div className="d-flex align-items-center">
             <div className="me-2">
-              <strong>FPT Education</strong>
-              <div className="small text-muted">FPT UNIVERSITY</div>
+              <strong>Quiz App</strong>
             </div>
           </div>
         </Navbar.Brand>
